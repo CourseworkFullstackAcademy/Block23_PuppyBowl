@@ -9,15 +9,21 @@ const APIURL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/`;
  */
 const fetchAllPlayers = async () => {
     try {
+      const response = await fetch(`${APIURL}/players/`);
+      const data = await response.JSON();
+      return data;
 
     } catch (err) {
         console.error('Uh oh, trouble fetching players!', err);
     }
+    return data;
 };
 
 const fetchSinglePlayer = async (playerId) => {
     try {
-
+      const response = await fetch(`${APIURL}/players/${playerId}`);
+      const data = await response.JSON();
+      return data;
     } catch (err) {
         console.error(`Oh no, trouble fetching player #${playerId}!`, err);
     }
@@ -161,6 +167,11 @@ function createForm() {
 
 const removePlayer = async (playerId) => {
     try {
+      const response = await fetch(`${APIURL}/players/${playerId}`, {
+        method: 'DELETE',
+      });
+      const data = await response.JSON();
+      return data
 
     } catch (err) {
         console.error(

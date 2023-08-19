@@ -97,21 +97,32 @@ function createForm() {
     const fieldOption = document.createElement("option");
     fieldOption.value = "field";
     fieldOption.textContent = "Field";
-
-    //Create team options
-    // const teamOption = document.createElement("option");
-    // benchOption.value = "bench";
-    // benchOption.textContent = "Bench";
-    // benchOption.selected = true;
-    // const teamOption = document.createElement("option");
-    // fieldOption.value = "field";
-    // fieldOption.textContent = "Field";
-
   
     // Append status options to select element
     statusInput.appendChild(fieldOption);
     statusInput.appendChild(benchOption);
-  
+
+    //connect team otpions to api syntax
+    const teamLabel = document.createElement("label");
+    teamLabel.textContent = "Team: ";
+    const teamInput = document.createElement("select");
+    teamInput.name = "teamId";
+    statusInput.required = true;
+
+    // Create team options
+    const ruffOption = document.createElement("option");
+    ruffOption.value = 3;
+    ruffOption.textContent = "Team Ruff";
+    ruffOption.selected = true;
+    const fluffOption = document.createElement("option");
+    fluffOption.value = 4;
+    fluffOption.textContent = "Team Fluff";
+
+    teamInput.appendChild(ruffOption);
+    teamInput.appendChild(fluffOption);
+
+
+    // image
     const imageLabel = document.createElement("label");
     imageLabel.textContent = "Image URL:";
     const imageInput = document.createElement("input");
@@ -131,7 +142,10 @@ function createForm() {
     breedLabel.appendChild(breedInput);
     form.appendChild(statusLabel);
     form.appendChild(statusInput);
-    statusLabel.appendChild(statusInput);
+    statusLabel.appendChild(statusInput);    
+    form.appendChild(teamLabel);
+    form.appendChild(teamInput);
+    teamLabel.appendChild(teamInput);  
     form.appendChild(imageLabel);
     form.appendChild(imageInput);
     imageLabel.appendChild(imageInput);
@@ -148,6 +162,7 @@ function createForm() {
       const name = nameInput.value;
       const breed = breedInput.value;
       const status = statusInput.value;
+      const team = teamInput.value;
       const imageUrl = imageInput.value;
   
       // Create the player object
@@ -155,6 +170,7 @@ function createForm() {
         name: name,
         breed: breed,
         status: status,
+        team: team,
         imageUrl: imageUrl
       };
   
@@ -290,11 +306,13 @@ const renderPlayerDetails = (player) => {
   const playerStatus = document.createElement("p");
   playerStatus.textContent = `Status: ${player.status}`;
 
+ 
   // Append elements to player card
   playerCard.appendChild(playerName);
   playerCard.appendChild(playerImage);
   playerCard.appendChild(playerBreed); 
   playerCard.appendChild(playerStatus);
+  //playerCard.appendChild(playerTeam);
   detailsContainer.appendChild(playerCard);
 
   

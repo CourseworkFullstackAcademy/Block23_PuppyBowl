@@ -24,6 +24,7 @@ const fetchSinglePlayer = async (playerId) => {
     try {
       const response = await fetch(`${APIURL}/players/${playerId}`);
       const data = await response.JSON();
+      console.log(data);
       return data;
     } catch (err) {
         console.error(`Oh no, trouble fetching player #${playerId}!`, err);
@@ -67,8 +68,6 @@ function createForm() {
     form.id = "newPlayerForm";
   
     // Create the form fields
-
-  
     const nameLabel = document.createElement("label");
     nameLabel.textContent = "Name:";
     const nameInput = document.createElement("input");
@@ -124,7 +123,6 @@ function createForm() {
     submitButton.value = "Add Player";
   
     // Append the form fields to the form
-
     form.appendChild(nameLabel);
     form.appendChild(nameInput);
     nameLabel.appendChild(nameInput);
@@ -212,15 +210,16 @@ const removePlayer = async (playerId) => {
  * @param playerList - an array of player objects
  * @returns the playerContainerHTML variable.
  */
+
+const allPlayersContainer = document.getElementById("all-players-container");
+
 const renderAllPlayers = (playerList) => {
   try {
-    const allPlayersContainer = document.getElementById("all-players-container");
-
-    // Clear existing content
+        // Clear existing content
     allPlayersContainer.innerHTML = "";
 
     // Loop through the playerList and create HTML elements for each player
-    playerList.forEach((player) => {
+    playerList.forEach((player, index) => {
       const playerCard = document.createElement("div");
       playerCard.classList.add("player-card"); // Add CSS classes as needed
 
@@ -237,19 +236,96 @@ const renderAllPlayers = (playerList) => {
       const playerStatus = document.createElement("p");
       playerStatus.textContent = `Status: ${player.status}`;
 
+      //More Details button
+      const detailsButton = document.createElement("button");
+      detailsButton.textContent = "Player Details";
+      detailsButton.classList.add("details-button");
+      detailsButton.setAttribute("data-player-index", index);
+
+      //Event listener for more details button
+      detailsButton.addEventListener("click", (event) => {
+        const playerIndex = parseInt(event.target.getAttribute("data-player-index"));
+        const player = playerList[playerIndex];
+        renderPlayerDetails(player);
+      });
+
       // Append player details to the player card
       playerCard.appendChild(playerName);
       playerCard.appendChild(playerBreed);
       playerCard.appendChild(playerStatus);
       playerCard.appendChild(PlayerImage);
+      playerCard.appendChild(detailsButton);
 
       // Append the player card to the allPlayersContainer
       allPlayersContainer.appendChild(playerCard);
+
     });
   } catch (err) {
     console.error('Uh oh, trouble rendering players!', err);
   }
 };
+
+//Render single player
+const renderPlayerDetails = (player) => {
+  console.log(player);
+  const detailsContainer = document.getElementById("player-details-container");
+  detailsContainer.innerHTML = ""; // Clear previous content
+
+  //unrender all players
+  allPlayersContainer.style.display = "none";
+
+  const playerCard = document.createElement("div");
+  playerCard.classList.add("player-card-detail"); // Add CSS classes as needed
+
+  const playerName = document.createElement("h2");
+  playerName.textContent = player.name;
+
+  const playerImage = document.createElement("img");
+  playerImage.src = player.imageUrl;
+  playerImage.alt = `${player.name} Image`;
+
+  const playerBreed = document.createElement("p");
+  playerBreed.textContent = `Breed: ${player.breed}`;
+
+  const playerStatus = document.createElement("p");
+  playerStatus.textContent = `Status: ${player.status}`;
+
+  // Append elements to player card
+  playerCard.appendChild(playerName);
+  playerCard.appendChild(playerImage);
+  playerCard.appendChild(playerBreed); 
+  playerCard.appendChild(playerStatus);
+  detailsContainer.appendChild(playerCard);
+
+  
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "Delete Player";
+
+  deleteButton.addEventListener("click", async () => {
+    await removePlayer(player.id);
+    init();
+  });
+  
+  playerCard.appendChild(deleteButton);
+
+  const backButton = document.createElement("button");
+  backButton.textContent = "Back";
+  
+  backButton.addEventListener("click", async() => {
+    try{
+      detailsContainer.remove();
+      window.location.reload();
+    } catch (error) {
+      console.log("Error fetching players:", error);
+    }
+    
+    detailsContainer.innerHTML = "";
+  })
+
+  playerCard.appendChild(backButton);
+ };
+  
+
 
 
 /**

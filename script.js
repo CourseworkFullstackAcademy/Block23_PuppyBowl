@@ -1,8 +1,5 @@
-const playerContainer = document.getElementById('all-players-container');
-const newPlayerFormContainer = document.getElementById('new-player-form');
-
-// Add your cohort name to the cohortName variable below, replacing the 'COHORT-NAME' placeholder
-const cohortName = 'YOUR COHORT NAME HERE';
+// Add your cohort name to the variable below, 
+const cohortName = '2302-acc-ct-web-pt-b';
 // Use the APIURL variable for fetch requests
 const APIURL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/`;
 
@@ -12,30 +9,169 @@ const APIURL = `https://fsa-puppy-bowl.herokuapp.com/api/${cohortName}/`;
  */
 const fetchAllPlayers = async () => {
     try {
+      const response = await fetch(`${APIURL}/players/`);
+      const data = await response.JSON();
+      return data;
 
     } catch (err) {
         console.error('Uh oh, trouble fetching players!', err);
     }
+    return data;
 };
 
 const fetchSinglePlayer = async (playerId) => {
     try {
-
+      const response = await fetch(`${APIURL}/players/${playerId}`);
+      const data = await response.JSON();
+      return data;
     } catch (err) {
         console.error(`Oh no, trouble fetching player #${playerId}!`, err);
     }
 };
 
+
+
 const addNewPlayer = async (playerObj) => {
     try {
-
+      const response = await fetch(APIURL + "players", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(playerObj),
+      });
+  
+      if (response.ok) {
+        const addedPlayer = await response.json();
+        console.log("Player added:", addedPlayer);
+        //dialog box showing user success
+        alert(`Success! ${name} added successfully.`);
+  
+        // Perform any further actions with the added player, such as displaying it on the page
+      } else {
+        console.error("Failed to add player");
+      }
+  
     } catch (err) {
-        console.error('Oops, something went wrong with adding that player!', err);
+      console.error("Oops, something went wrong with adding that player!", err);
     }
-};
+  };
+
+// script.js
+function createForm() {
+    const formContainer = document.getElementById("new-player-form");
+  
+    // Create the form element
+    const form = document.createElement("form");
+    form.id = "newPlayerForm";
+  
+    // Create the form fields
+
+  
+    const nameLabel = document.createElement("label");
+    nameLabel.textContent = "Name:";
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.name = "name";
+    nameInput.required = true;
+    nameInput.autocomplete = "name";
+  
+    const breedLabel = document.createElement("label");
+    breedLabel.textContent = "Breed:";
+    const breedInput = document.createElement("input");
+    breedInput.type = "text";
+    breedInput.name = "breed";
+    breedInput.required = true;
+  
+    const statusLabel = document.createElement("label");
+    statusLabel.textContent = "Status:";
+    const statusInput = document.createElement("select");
+    statusInput.name = "status";
+    statusInput.required = true;
+  
+    // Create status options
+    const benchOption = document.createElement("option");
+    benchOption.value = "bench";
+    benchOption.textContent = "Bench";
+    benchOption.selected = true;
+    const fieldOption = document.createElement("option");
+    fieldOption.value = "field";
+    fieldOption.textContent = "Field";
+
+  
+    // Append status options to select element
+    statusInput.appendChild(fieldOption);
+    statusInput.appendChild(benchOption);
+  
+    const imageLabel = document.createElement("label");
+    imageLabel.textContent = "Image URL:";
+    const imageInput = document.createElement("input");
+    imageInput.type = "text";
+    imageInput.name = "imageUrl";
+  
+    const submitButton = document.createElement("input");
+    submitButton.type = "submit";
+    submitButton.value = "Add Player";
+  
+    // Append the form fields to the form
+
+    form.appendChild(nameLabel);
+    form.appendChild(nameInput);
+    nameLabel.appendChild(nameInput);
+    form.appendChild(breedLabel);
+    form.appendChild(breedInput);
+    breedLabel.appendChild(breedInput);
+    form.appendChild(statusLabel);
+    form.appendChild(statusInput);
+    statusLabel.appendChild(statusInput);
+    form.appendChild(imageLabel);
+    form.appendChild(imageInput);
+    imageLabel.appendChild(imageInput);
+    form.appendChild(submitButton);
+      
+    // Append the form to the form container
+    formContainer.appendChild(form);
+  
+    // Add form submission event listener
+    form.addEventListener("submit", (event) => {
+      event.preventDefault(); // Prevent the default form submission
+  
+      // Retrieve the entered values
+      const name = nameInput.value;
+      const breed = breedInput.value;
+      const status = statusInput.value;
+      const imageUrl = imageInput.value;
+  
+      // Create the player object
+      const player = {   
+        name: name,
+        breed: breed,
+        status: status,
+        imageUrl: imageUrl
+      };
+  
+      // Display the player object
+      console.log(player);
+
+      // Optionally, reset the form after submission
+      form.reset();
+
+      //Ensure status goes back to bench after submission
+      statusInput.value = "bench";
+    });
+  }
+  
+  // Call the createForm() function to create the form dynamically
+  createForm();
+  
 
 const removePlayer = async (playerId) => {
     try {
+      const response = await fetch(`${APIURL}/players/${playerId}`, {
+        method: 'DELETE',
+      });
+      const data = await response.JSON();
+      return data
 
     } catch (err) {
         console.error(

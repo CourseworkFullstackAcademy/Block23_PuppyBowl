@@ -11,12 +11,14 @@ const fetchAllPlayers = async () => {
     try {
       const response = await fetch(`${APIURL}/players/`);
       const data = await response.json();
+      console.log(data);
       return data;
-
+      
     } catch (err) {
         console.error('Uh oh, trouble fetching players!', err);
     }
 };
+
 
 const fetchSinglePlayer = async (playerId) => {
     try {
@@ -97,6 +99,15 @@ function createForm() {
     fieldOption.value = "field";
     fieldOption.textContent = "Field";
 
+    //Create team options
+    // const teamOption = document.createElement("option");
+    // benchOption.value = "bench";
+    // benchOption.textContent = "Bench";
+    // benchOption.selected = true;
+    // const teamOption = document.createElement("option");
+    // fieldOption.value = "field";
+    // fieldOption.textContent = "Field";
+
   
     // Append status options to select element
     statusInput.appendChild(fieldOption);
@@ -132,7 +143,7 @@ function createForm() {
     formContainer.appendChild(form);
   
     // Add form submission event listener
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault(); // Prevent the default form submission
   
       // Retrieve the entered values
@@ -150,6 +161,7 @@ function createForm() {
       };
   
       // Display the player object
+      await addNewPlayer(player);
       console.log(player);
 
       // Optionally, reset the form after submission
@@ -201,11 +213,37 @@ const removePlayer = async (playerId) => {
  * @returns the playerContainerHTML variable.
  */
 const renderAllPlayers = (playerList) => {
-    try {
-        
-    } catch (err) {
-        console.error('Uh oh, trouble rendering players!', err);
-    }
+  try {
+    const allPlayersContainer = document.getElementById("all-players-container");
+
+    // Clear existing content
+    allPlayersContainer.innerHTML = "";
+
+    // Loop through the playerList and create HTML elements for each player
+    playerList.forEach((player) => {
+      const playerCard = document.createElement("div");
+      playerCard.classList.add("player-card"); // Add CSS classes as needed
+
+      const playerName = document.createElement("h2");
+      playerName.textContent = player.name;
+
+      const playerBreed = document.createElement("p");
+      playerBreed.textContent = `Breed: ${player.breed}`;
+
+      const playerStatus = document.createElement("p");
+      playerStatus.textContent = `Status: ${player.status}`;
+
+      // Append player details to the player card
+      playerCard.appendChild(playerName);
+      playerCard.appendChild(playerBreed);
+      playerCard.appendChild(playerStatus);
+
+      // Append the player card to the allPlayersContainer
+      allPlayersContainer.appendChild(playerCard);
+    });
+  } catch (err) {
+    console.error('Uh oh, trouble rendering players!', err);
+  }
 };
 
 
@@ -222,7 +260,11 @@ const renderNewPlayerForm = () => {
 }
 
 const init = async () => {
-    const players = await fetchAllPlayers();
+    const response = await fetchAllPlayers();
+    const players = response.data.players;
+    console.log("Type of playerList:", typeof players); // Should be 'object'
+    console.log("Is playerList an Array?", Array.isArray(players)); // Should be true
+    
     renderAllPlayers(players);
 
     renderNewPlayerForm();

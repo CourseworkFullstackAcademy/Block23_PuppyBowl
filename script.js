@@ -227,6 +227,10 @@ const renderAllPlayers = (playerList) => {
       const playerName = document.createElement("h2");
       playerName.textContent = player.name;
 
+      const PlayerImage = document.createElement("img");
+      PlayerImage.src = player.imageUrl;
+      PlayerImage.alt = `${player.name} Image`
+
       const playerBreed = document.createElement("p");
       playerBreed.textContent = `Breed: ${player.breed}`;
 
@@ -237,6 +241,7 @@ const renderAllPlayers = (playerList) => {
       playerCard.appendChild(playerName);
       playerCard.appendChild(playerBreed);
       playerCard.appendChild(playerStatus);
+      playerCard.appendChild(PlayerImage);
 
       // Append the player card to the allPlayersContainer
       allPlayersContainer.appendChild(playerCard);
